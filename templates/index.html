@@ -1,0 +1,63 @@
+
+{% extends "base.html" %}
+
+{% block title %}لیست مشتریان{% endblock %}
+
+{% block content %}
+
+<style>
+  form input, form button {
+    direction: rtl;
+    text-align: right;
+  }
+</style>
+
+<h1>لیست مشتریان ({{ customers|length }} مورد)</h1>
+
+<form action="{{ url_for('home') }}" method="get">
+  <input type="text" name="q" placeholder="جستجوی مشتری..." value="{{ q }}">
+  <button type="submit">جستجو</button>
+</form>
+
+<a href="{{ url_for('add_customer') }}">اضافه کردن مشتری جدید</a>
+<table>
+  <thead>
+    <tr>
+      <th>شناسه</th>
+      <th>نام و نام خانوادگی</th>
+      <th>کد مشتری</th>
+      <th>تلفن</th>
+      <th>آدرس</th>
+      <th>توضیحات</th>
+      <th>عملیات</th>
+      <th>تاریخچه سفارشات</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for customer in customers %}
+    <tr>
+      <td>{{ customer.id }}</td>
+      <td>{{ customer.name }}</td>
+      <td>{{ customer.customer_code }}</td>
+      <td>{{ customer.phone }}</td>
+      <td>{{ customer.address }}</td>
+      <td>{{ customer.description }}</td>
+      <td>
+        <a href="{{ url_for('edit_customer', id=customer.id) }}">ویرایش</a>
+        <form action="{{ url_for('delete_customer', id=customer.id) }}" method="post" style="display:inline;">
+          <button type="submit">حذف</button>
+        </form>
+      </td>
+      <td>
+        {% if customer.order_count|int > 0 %}
+          <a href="{{ url_for('customer_history', id=customer.id) }}">تاریخچه</a>
+        {% else %}
+          مشتری سفارشی نداشته است
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
