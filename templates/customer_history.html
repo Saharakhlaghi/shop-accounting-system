@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}تاریخچه سفارشات مشتری{% endblock %}
+
+{% block content %}
+<style>
+  h1, p, table, th, td, a {
+    direction: rtl;
+    text-align: right;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+  }
+</style>
+
+<h1>تاریخچه سفارشات مشتری: {{ customer.name }}</h1>
+<p><strong>کد مشتری:</strong> {{ customer.customer_code }}</p>
+<p><strong>تلفن:</strong> {{ customer.phone }}</p>
+<hr>
+{% if orders|length == 0 %}
+  <p>مشتری سفارشی نداشته است.</p>
+{% else %}
+  <table>
+    <thead>
+      <tr>
+        <th>شناسه سفارش</th>
+        <th>محصول</th>
+        <th>مبلغ خرید</th>
+        <th>مبلغ فروش</th>
+        <th>سود</th>
+        <th>واریزی</th>
+        <th>باقی حساب</th>
+        <th>تاریخ ثبت</th>
+        <th>تاریخ تحویل</th>
+        <th>وضعیت تحویل</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders|reverse %}
+      <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.product }}</td>
+        <td>{{ order.purchase_amount }}</td>
+        <td>{{ order.selling_amount }}</td>
+        <td>{{ order.profit }}</td>
+        <td>{{ order.deposit }}</td>
+        <td>{{ order.remaining_balance }}</td>
+        <td>{{ order.registration_date  }}</td>
+        <td>{{ order.delivery_date }}</td>
+        <td>{% if order.delivered == 1 %}تحویل داده شده{% else %}تحویل نشده{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+<a href="{{ url_for('customer_profile', id=customer.id) }}">بازگشت به پروفایل مشتری</a>
+{% endblock %}

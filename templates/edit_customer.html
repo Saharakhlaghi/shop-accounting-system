@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}ویرایش مشتری{% endblock %}
+
+{% block content %}
+<style>
+  form, form * {
+    direction: rtl;
+    text-align: right;
+    max-width: 600px;
+    margin: auto;
+  }
+  form div {
+    margin-bottom: 1em;
+  }
+  form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+  form input[type="text"],
+  form input[type="number"],
+  form input[type="date"],
+  form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  form input[type="checkbox"] {
+    margin-left: 5px;
+  }
+  form button {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  form button:hover {
+    background-color: #4cae4c;
+  }
+</style>
+
+<h1>ویرایش مشتری</h1>
+<form action="{{ url_for('edit_customer', id=customer[0]) }}" method="post">
+  <div>
+    <label for="name">نام و نام خانوادگی:</label>
+    <input type="text" id="name" name="name" value="{{ customer[1] }}" required>
+  </div>
+  <div>
+    <label for="customer_code">کد مشتری:</label>
+    <input type="text" id="customer_code" name="customer_code" value="{{ customer[2] }}" required>
+  </div>
+  <div>
+    <label for="phone">تلفن:</label>
+    <input type="text" id="phone" name="phone" value="{{ customer[3] }}" required>
+  </div>
+  <div>
+    <label for="address">آدرس:</label>
+    <input type="text" id="address" name="address" value="{{ customer[4] }}">
+  </div>
+  <div>
+    <label for="description">توضیحات:</label>
+    <textarea id="description" name="description">{{ customer[5] }}</textarea>
+  </div>
+  <button type="submit">ذخیره تغییرات</button>
+</form>
+{% endblock %}

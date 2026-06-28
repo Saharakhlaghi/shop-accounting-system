@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}ثبت سفارش جدید{% endblock %}
+
+{% block content %}
+
+  #customerSearchSection {
+      margin-bottom: 20px;
+  }
+  #customerSearchSection label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+  }
+  #customerSearchSection input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+  }
+  #customerSearchSection button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #5cb85c;
+      border: none;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  #customerSearchSection button:hover {
+      background-color: #4cae4c;
+  }
+  #customerSearchResults div {
+      cursor: pointer;
+      border-bottom: 1px solid #ccc;
+      padding: 4px;
+      text-align: right;
+  }
+  
+ 
+  form.order-form {
+      direction: rtl;
+      text-align: right;
+      max-width: 600px;
+      margin: auto;
+  }
+  form.order-form div {
+      margin-bottom: 1em;
+  }
+  form.order-form label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+  }
+  form.order-form input[type="text"],
+  form.order-form input[type="number"],
+  form.order-form textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+  }
+  form.order-form input[type="checkbox"] {
+      margin-left: 5px;
+  }
+  form.order-form button {
+      padding: 8px 16px;
+      background-color: #5cb85c;
+      border: none;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  form.order-form button:hover {
+      background-color: #4cae4c;
+  }
+</style>
+
+<h1>ثبت سفارش جدید</h1>
+
+
+<div id="customerSearchSection">
+  <label for="customer_search_input">جستجوی مشتری:</label>
+  <input type="text" id="customer_search_input" placeholder="نام مشتری را وارد کنید...">
+  <button type="button" onclick="searchCustomer()">جستجو</button>
+  <div id="customerSearchResults"></div>
+</div>
+
+<hr>
+
+<!-- فرم ثبت سفارش -->
+<form class="order-form" action="{{ url_for('add_order') }}" method="post">
+  <input type="hidden" id="customer_id" name="customer_id">
+  <div>
+    <label for="selected_customer">مشتری انتخاب شده:</label>
+    <span id="selected_customer"></span>
+  </div>
+  <div>
+    <label for="product">محصول:</label>
+    <input type="text" id="product" name="product" required>
+  </div>
+  <div>
+    <label for="purchase_amount">مبلغ خرید:</label>
+    <input type="number" step="0.01" id="purchase_amount" name="purchase_amount" required>
+  </div>
+  <div>
+    <label for="selling_amount">مبلغ فروش:</label>
+    <input type="number" step="0.01" id="selling_amount" name="selling_amount" required>
+  </div>
+  <div>
+    <label for="deposit">واریزی:</label>
+    <input type="number" step="0.01" id="deposit" name="deposit">
+  </div>
+  <div>
+    <label for="registration_date">تاریخ ثبت :</label>
+    <input type="text" id="registration_date" name="registration_date" required>
+  </div>
+  <div>
+    <label for="delivery_date">تاریخ تحویل :</label>
+    <input type="text" id="delivery_date" name="delivery_date">
+  </div>
+  <div>
+    <label for="send_to_customer_address">ارسال به آدرس مشتری؟</label>
+    <input type="checkbox" id="send_to_customer_address" name="send_to_customer_address">
+  </div>
+  <div>
+    <label for="delivery_address">آدرس تحویل (در صورت عدم انتخاب، آدرس مشتری استفاده می‌شود):</label>
+    <input type="text" id="delivery_address" name="delivery_address">
+  </div>
+  <div>
+    <label for="delivered">تحویل شده؟</label>
+    <input type="checkbox" id="delivered" name="delivered">
+  </div>
+  <button type="submit">ثبت سفارش</button>
+</form>
+
+<script>
+function searchCustomer() {
+  var query = document.getElementById('customer_search_input').value;
+  fetch('{{ url_for("search_customers") }}?q=' + encodeURIComponent(query))
+    .then(response => response.json())
+    .then(data => {
+      var resultsDiv = document.getElementById('customerSearchResults');
+      resultsDiv.innerHTML = "";
+      if(data.length === 0) {
+         resultsDiv.innerHTML = "<p>مشتری یافت نشد.</p>";
+      } else {
+         data.forEach(function(customer) {
+              var div = document.createElement('div');
+              div.innerHTML = customer.name + " - " + customer.phone;
+              div.onclick = function() {
+                document.getElementById('customer_id').value = customer.id;
+                document.getElementById('selected_customer').innerText = customer.name;
+                resultsDiv.innerHTML = "";
+              }
+              resultsDiv.appendChild(div);
+         });
+      }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+
+{% endblock %}
+

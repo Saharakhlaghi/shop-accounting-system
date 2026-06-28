@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}پروفایل مشتری{% endblock %}
+{% block content %}
+<h1>پروفایل {{ customer['name'] }}</h1>
+<p><strong>شماره تماس:</strong> {{ customer['phone'] }}</p>
+<p><strong>آدرس:</strong> {{ customer['address'] }}</p>
+
+<h2>تاریخچه سفارش‌ها</h2>
+<table border="1" style="width: 100%; text-align: right; direction: rtl;">
+  <thead>
+    <tr>
+      <th>محصول</th>
+      <th>مبلغ فروش</th>
+      <th>واریزی</th>
+      <th>مانده</th>
+      <th>تاریخ ثبت</th>
+      <th>تحویل شده؟</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+    <tr>
+      <td>{{ order['product'] }}</td>
+      <td>{{ "{:,}".format(order['selling_amount']) }}</td>
+      <td>{{ "{:,}".format(order['deposit']) }}</td>
+      <td>{{ "{:,}".format(order['remaining_balance']) }}</td>
+      <td>{{ order['registration_date'] }}</td>
+      <td>{{ "بله" if order['delivered'] else "خیر" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

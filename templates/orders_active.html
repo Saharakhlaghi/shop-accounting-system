@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}سفارشات فعال (تحویل داده نشده){% endblock %}
+
+{% block content %}
+<style>
+  h1, form, table, th, td, a, input, button {
+    direction: rtl;
+    text-align: right;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+  }
+</style>
+
+<h1>سفارشات فعال (تحویل داده نشده)</h1>
+
+<form action="{{ url_for('orders_active') }}" method="get">
+  <input type="text" name="q" placeholder="جستجوی نام مشتری..." value="{{ q }}">
+  <button type="submit">جستجو</button>
+</form>
+
+<a href="{{ url_for('add_order') }}">ثبت سفارش جدید</a>
+<table>
+  <thead>
+    <tr>
+      <th>مشتری</th>
+      <th>محصول</th>
+      <th>مبلغ خرید</th>
+      <th>مبلغ فروش</th>
+      <th>سود</th>
+      <th>واریزی</th>
+      <th>باقی حساب</th>
+      <th>تاریخ ثبت</th>
+      <th>تاریخ تحویل</th>
+      <th>آدرس تحویل</th>
+      <th>تحویل</th>
+      <th>عملیات</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders|reverse %}
+    <tr>
+      <td>
+        {% if order['customer_id'] %}
+          <a href="{{ url_for('customer_profile', id=order['customer_id']) }}">
+            {{ order['customer_name'] }}
+          </a>
+        {% else %}
+          نام مشتری موجود نیست
+        {% endif %}
+      </td>
+      <td>{{ order['product'] }}</td>
+      <td>{{ "{:,}".format(order['purchase_amount']) }}</td>
+      <td>{{ "{:,}".format(order['selling_amount']) }}</td>
+      <td>{{ "{:,}".format(order['profit']) }}</td>
+      <td>{{ "{:,}".format(order['deposit']) }}</td>
+      <td>{{ "{:,}".format(order['remaining_balance']) }}</td>
+      <td>{{ order['registration_date']  }}</td>
+      <td>{{ order['delivery_date'] }}</td>
+      <td>{{ order['delivery_address'] }}</td>
+      <td>{% if order['delivered'] == 1 %}بله{% else %}خیر{% endif %}</td>
+      <td>
+        <a href="{{ url_for('edit_order', order_id=order['id']) }}">ویرایش</a>
+        <form action="{{ url_for('delete_order', order_id=order['id']) }}" method="post" style="display:inline;">
+          <button type="submit">حذف</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
